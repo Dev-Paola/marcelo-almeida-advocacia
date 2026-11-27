@@ -145,6 +145,150 @@ const createPracticeCard = ({ number, title, description, href, iconPaths }) => 
 
 practiceAreas.forEach((area) => practiceGrid.append(createPracticeCard(area)));
 
+const consultationForm = document.querySelector("#consultation-form");
+const consultationArea = document.querySelector("#consultation-area");
+const consultationSubmit = document.querySelector("#consultation-submit");
+const consultationFeedback = document.querySelector("#consultation-feedback");
+const consultationFieldNames = ["nome", "email", "telefone", "area_atuacao", "mensagem"];
+
+if (
+  !(consultationForm instanceof HTMLFormElement) ||
+  !(consultationArea instanceof HTMLSelectElement) ||
+  !(consultationSubmit instanceof HTMLButtonElement) ||
+  !(consultationFeedback instanceof HTMLElement)
+) {
+  throw new Error("Os elementos do formulário de consulta não foram encontrados.");
+}
+
+practiceAreas.forEach(({ title }) => {
+  const option = document.createElement("option");
+  option.value = title;
+  option.textContent = title;
+  consultationArea.append(option);
+});
+
+const clearConsultationFieldError = (name) => {
+  const field = consultationForm.elements.namedItem(name);
+  const error = document.querySelector(`#error-${name}`);
+
+  if (
+    (field instanceof HTMLInputElement ||
+      field instanceof HTMLSelectElement ||
+      field instanceof HTMLTextAreaElement) &&
+    error instanceof HTMLElement
+  ) {
+    field.removeAttribute("aria-invalid");
+    error.textContent = "";
+  }
+};
+
+const clearConsultationErrors = () => {
+  consultationFieldNames.forEach(clearConsultationFieldError);
+  consultationFeedback.textContent = "";
+  consultationFeedback.classList.remove("is-error");
+};
+
+const phoneField = consultationForm.elements.namedItem("telefone");
+if (!(phoneField instanceof HTMLInputElement)) {
+  throw new Error("O campo de telefone não foi encontrado.");
+}
+
+phoneField.addEventListener("input", () => {
+  let digits = phoneField.value.replace(/\D/g, "");
+  if ((digits.length === 12 || digits.length === 13) && digits.startsWith("55")) {
+    digits = digits.slice(2);
+  }
+  digits = digits.slice(0, 11);
+
+  if (digits.length > 2) {
+    const areaCode = digits.slice(0, 2);
+    const subscriber = digits.slice(2);
+    const formattedSubscriber =
+      subscriber.length > 4
+        ? `${subscriber.slice(0, -4)}-${subscriber.slice(-4)}`
+        : subscriber;
+    phoneField.value = `(${areaCode}) ${formattedSubscriber}`;
+  } else {
+    phoneField.value = digits;
+  }
+});
+
+consultationFieldNames.forEach((name) => {
+  const field = consultationForm.elements.namedItem(name);
+  if (
+    field instanceof HTMLInputElement ||
+    field instanceof HTMLSelectElement ||
+    field instanceof HTMLTextAreaElement
+  ) {
+    field.addEventListener("input", () => clearConsultationFieldError(name));
+    field.addEventListener("change", () => clearConsultationFieldError(name));
+  }
+});
+
+consultationForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  clearConsultationErrors();
+
+  const originalButtonText = consultationSubmit.textContent;
+  consultationSubmit.disabled = true;
+  consultationSubmit.textContent = "Enviando...";
+
+  try {
+    const response = await fetch("api/agendar.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(Object.fromEntries(new FormData(consultationForm).entries())),
+    });
+    const result = await response.json();
+
+    if (response.status === 422 && result.errors && typeof result.errors === "object") {
+      Object.entries(result.errors).forEach(([name, message]) => {
+        const field = consultationForm.elements.namedItem(name);
+        const error = document.querySelector(`#error-${name}`);
+        if (
+          consultationFieldNames.includes(name) &&
+          (field instanceof HTMLInputElement ||
+            field instanceof HTMLSelectElement ||
+            field instanceof HTMLTextAreaElement) &&
+          error instanceof HTMLElement
+        ) {
+          field.setAttribute("aria-invalid", "true");
+          error.textContent = String(message);
+        }
+      });
+    }
+
+    if (!response.ok) {
+      consultationFeedback.textContent =
+        typeof result.message === "string"
+          ? result.message
+          : "Não foi possível enviar sua solicitação. Tente novamente.";
+      consultationFeedback.classList.add("is-error");
+      return;
+    }
+
+    if (response.status === 201) {
+      consultationForm.reset();
+      consultationFeedback.textContent =
+        typeof result.message === "string"
+          ? result.message
+          : "Solicitação enviada. Entraremos em contato em breve.";
+    } else {
+      consultationFeedback.textContent =
+        typeof result.message === "string"
+          ? result.message
+          : "Sua solicitação foi recebida.";
+    }
+  } catch {
+    consultationFeedback.textContent =
+      "Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.";
+    consultationFeedback.classList.add("is-error");
+  } finally {
+    consultationSubmit.disabled = false;
+    consultationSubmit.textContent = originalButtonText;
+  }
+});
+
 const aboutHighlights = [
   "Atendimento direto e humano",
   "Comunicação clara e transparente",
@@ -294,6 +438,7 @@ const footerNavigationLinks = [
   { label: "Atuação", href: "#atuacao" },
   { label: "Sobre", href: "#sobre" },
   { label: "Depoimentos", href: "#depoimentos" },
+  { label: "Consulta", href: "#consulta" },
 ];
 const oabRegistration = { organization: "OAB/SP", number: "Nº 000.000" };
 const footerContact = document.querySelector("#footer-contact");

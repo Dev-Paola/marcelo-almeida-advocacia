@@ -1,0 +1,28 @@
+# Local SQLite databases and sidecar files
+*.sqlite
+*.sqlite3
+*.db
+*.sqlite-*
+/database/consultas.sqlite*
+
+# Local runtime, temporary, and cache files
+*.tmp
+*.temp
+*.cache
+*.rate-limit
+*.rate_limit
+*.ratelimit
+cache/
+tmp/
+temp/
+
+# Dependencies and local environment
+vendor/
+node_modules/
+.env
+
+# IDE and operating system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -33,6 +33,7 @@
           <a class="nav-link" href="#atuacao">Atuação</a>
           <a class="nav-link" href="#sobre">Sobre</a>
           <a class="nav-link" href="#depoimentos">Depoimentos</a>
+          <a class="nav-link" href="#consulta">Consulta</a>
         </nav>
 
         <a class="header-cta" href="tel:+5511999999999">Fale comigo</a>
@@ -53,6 +54,7 @@
           <a class="mobile-menu-link" href="#atuacao">Atuação</a>
           <a class="mobile-menu-link" href="#sobre">Sobre</a>
           <a class="mobile-menu-link" href="#depoimentos">Depoimentos</a>
+          <a class="mobile-menu-link" href="#consulta">Consulta</a>
           <a class="mobile-menu-cta" href="tel:+5511999999999">Fale comigo</a>
         </nav>
       </header>
@@ -234,6 +236,113 @@
                 </svg>
               </a>
             </aside>
+          </div>
+        </section>
+
+        <section class="consultation-section" id="consulta" aria-labelledby="consultation-title">
+          <div class="consultation-container">
+            <header class="consultation-heading">
+              <p class="consultation-eyebrow">Atendimento confidencial</p>
+              <h2 id="consultation-title">Vamos entender o seu caso.</h2>
+              <p>
+                Conte um pouco sobre a sua necessidade. Nossa equipe entrará em
+                contato para orientar os próximos passos.
+              </p>
+            </header>
+
+            <form class="consultation-form" id="consultation-form" novalidate>
+              <div class="form-field">
+                <label for="consultation-name">Nome completo</label>
+                <input
+                  id="consultation-name"
+                  name="nome"
+                  type="text"
+                  autocomplete="name"
+                  minlength="3"
+                  maxlength="120"
+                  required
+                  aria-describedby="error-nome"
+                >
+                <span class="field-error" id="error-nome"></span>
+              </div>
+
+              <div class="form-field">
+                <label for="consultation-email">E-mail</label>
+                <input
+                  id="consultation-email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  maxlength="254"
+                  required
+                  aria-describedby="error-email"
+                >
+                <span class="field-error" id="error-email"></span>
+              </div>
+
+              <div class="form-field">
+                <label for="consultation-phone">Telefone</label>
+                <input
+                  id="consultation-phone"
+                  name="telefone"
+                  type="tel"
+                  autocomplete="tel"
+                  inputmode="tel"
+                  maxlength="20"
+                  required
+                  aria-describedby="error-telefone"
+                >
+                <span class="field-error" id="error-telefone"></span>
+              </div>
+
+              <div class="form-field">
+                <label for="consultation-area">Área de atuação</label>
+                <select
+                  id="consultation-area"
+                  name="area_atuacao"
+                  required
+                  aria-describedby="error-area_atuacao"
+                >
+                  <option value="">Selecione uma área</option>
+                </select>
+                <span class="field-error" id="error-area_atuacao"></span>
+              </div>
+
+              <div class="form-field form-field-wide">
+                <label for="consultation-message">Resumo do caso</label>
+                <textarea
+                  id="consultation-message"
+                  name="mensagem"
+                  rows="5"
+                  minlength="10"
+                  maxlength="2000"
+                  required
+                  aria-describedby="error-mensagem"
+                ></textarea>
+                <span class="field-error" id="error-mensagem"></span>
+              </div>
+
+              <div class="form-honeypot" aria-hidden="true">
+                <label for="consultation-website">Não preencha este campo</label>
+                <input
+                  id="consultation-website"
+                  name="website"
+                  type="text"
+                  tabindex="-1"
+                  autocomplete="off"
+                >
+              </div>
+
+              <div class="form-submit-row">
+                <p class="form-privacy-note">
+                  Suas informações serão tratadas com confidencialidade.
+                </p>
+                <button class="consultation-submit" id="consultation-submit" type="submit">
+                  Solicitar consulta
+                </button>
+              </div>
+              <p class="form-feedback" id="consultation-feedback" role="status" aria-live="polite"></p>
+            </form>
           </div>
         </section>
       </main>
